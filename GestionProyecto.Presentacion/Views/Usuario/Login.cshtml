@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+   
+
+}
+<div class="text-center">
+    <form method="post" >
+        <img class="mb-4" src="~/images/usuario.svg" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Inicio de Seccion</h1>
+
+        <div class="form-floating">
+            <input type="text" class="form-control" id="Usuario" name="Usuario" placeholder="Usuario" required>
+            <label for="Usuario">Usuario</label> 
+            
+        </div>
+        <div class="form-floating">
+
+            <input type="password" class="form-control" id="pass" required name="Password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Debe contener al menos un número y una letra mayúscula y minúscula, y al menos 8 caracteres o más" >
+            <label for="pass">Password</label>
+
+        </div>
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <div class="checkbox mb-3">
+            <label>
+                <a asp-controller="Usuario" asp-action="CreateUser">Registro</a>
+            </label>
+        </div>
+        @{
+            if (ViewBag.Error != null)
+            {
+               
+                <label class="alert-danger">@ViewBag.Error</label>
+            }
+        }
+        <button class="w-100 btn btn-lg btn-primary" name="login" type="submit">Login</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+    </form>
+</div>

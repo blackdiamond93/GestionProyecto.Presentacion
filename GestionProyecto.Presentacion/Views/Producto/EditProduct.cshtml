@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "EditProduct Page";
+}
+<form class="row g-3" method="post">
+    <input type hidden value="@ViewBag.id" name="IdProducto"/>
+    <div class="form-floating col-md-6">
+        <input type="text" class="form-control" id="Nombre" name="Nombre" placeholder="Nombre del producto" min="5" required>
+        <label for="Nombre">Nombre del Producto</label>
+
+    </div>
+    <div class="form-floating col-md-6">
+        <input type="text" class="form-control" id="Descripcion" name="Descripcion" placeholder="Descripcion del producto" min="5" required>
+        <label for="Descripcion">Descripcion del Producto</label>
+
+    </div>
+
+    <div class="col-md-4">
+        <label for="Categoria" class="form-label">Categoria</label>
+        <select id="Categoria" name="IdCategoria" class="form-select" required>
+            <option selected>Seleccione una Categoria</option>
+            @{
+                if (ViewBag.list != null)
+                {
+                    foreach (var item in ViewBag.list)
+                    {
+                        <option value="@item.Id">@item.Descripcion</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+
+
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Creat</button>
+    </div>
+</form>

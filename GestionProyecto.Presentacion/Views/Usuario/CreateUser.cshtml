@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="text-center">
+    <div>
+        <form method="post">
+            <img class="mb-4" src="~/images/usuario.svg" alt="" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal">Registro Usuario</h1>
+
+            <div class="form-floating">
+                <input type="text" class="form-control" id="Usuario" name="Usuario" placeholder="Usuario" required>
+                <label for="Usuario">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="pass" name="Password" placeholder="Password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Debe contener al menos un número y una letra mayúscula y minúscula, y al menos 8 caracteres o más">
+                <label for="pass">Password</label>
+            </div>
+            <select class="form-select" id="select" name="Rol" aria-label="Default select example" required>
+                <option selected>selecione un rol</option>
+                @{
+                    if (ViewBag.listRoles != null)
+                    {
+                        foreach (var item in ViewBag.listRoles)
+                        {
+                            <option value="@item.Id">@item.Descripcion</option>
+                        }
+                    }
+                }
+
+            </select>
+            <label for="select">Roles</label>
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+        </form>
+    </div>
+</div>
+

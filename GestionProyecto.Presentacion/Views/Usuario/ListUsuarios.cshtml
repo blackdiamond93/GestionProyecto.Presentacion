@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "ListUser Page";
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Rol</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (ViewBag.list != null)
+            {
+                foreach (var item in ViewBag.list)
+                {
+                    <tr>
+                        <th scope="row">@item.Id</th>
+                        <td>@item.Nombre</td>
+                        <td>@item.Usuarios</td>
+                        <td>@item.Rols</td>
+                    </tr>
+                }
+            }
+        }
+
+
+    </tbody>
+</table>

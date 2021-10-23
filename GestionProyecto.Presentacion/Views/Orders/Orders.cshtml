@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "Orders Page";
+}
+
+<form class="row g-3">
+
+
+    <div class="col-md-2">
+        <label for="IdCliente" class="form-label">Cliente</label>
+        <select id="IdCliente" name="IdCliente" class="form-select" required>
+            <option selected>Seleccione un Cliente</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="IdProducto" class="form-label">Producto</label>
+        <select id="IdProducto" name="list.IdProducto" class="form-select" required onchange="Getprecio()">
+            <option selected>Seleccione un Producto</option>
+            @{
+                if (ViewBag.listProduct != null)
+                {
+                    foreach (var item in ViewBag.listProduct)
+                    {
+                        <option value="@item.IdProducto">@item.Nombre</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+    <div class="form-floating col-md-2">
+        <input type="number" class="form-control" id="Cantidad" name="Cantidad" required min="1">
+        <label for="Precio">Cantidad productos</label>
+
+    </div>
+    <div class="form-floating col-md-2">
+        <input type="text" class="form-control" id="Precio" name="Precio" required disabled>
+        <label for="Precio">Precio del Producto en $</label>
+
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn btn-primary" onclick="Add()">Add</button>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Cantida</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody id="tbody" class="tbody">
+        </tbody>
+    </table>
+
+    <div class="form-floating col-md-2">
+        <input type="number" class="form-control" id="Iva" name="Iva" required disabled>
+        <label for="Iva">IVa de la factura en $</label>
+
+    </div>
+    <div class="form-floating col-md-2">
+        <input type="number" class="form-control" id="Total" name="Total" required disabled>
+        <label for="Total">Total de la factura en $</label>
+
+    </div>
+
+
+    <div class="col-12">
+        <button type="button" class="btn btn-primary" onclick="Pay()">Pagar</button>
+    </div>
+</form>
+
+<script>
+    async function Pay() {
+ 
+        let list = [];
+        document.querySelectorAll('.tbody tr').forEach(function (e) {
+            let fila = {
+                IdProducto: e.querySelector('.IdProducto').innerText,
+                Cantidad: e.querySelector('.Cantidad').innerText,
+                Precio: e.querySelector('.Precio').innerText
+            };
+            list.push(fila);
+
+        });
+        console.log(list);
+        var idCliente = document.getElementById('IdCliente');
+        var total = document.getElementById('Total');
+        var iva = document.getElementById('Iva');
+
+        var formData = new FormData();
+        formData.append("IdCliente", idCliente.value);
+        formData.append("Total", total.value);
+        formData.append("Iva", iva.value);
+
+        fetch("https://localhost:44344/Orders/Orders", {
+            method: "POST",
+            body: formData
+        }).then(res =>  res.json())
+            .then(res => {
+                list.map(d => {
+                    var forma = new FormData();
+                    forma.append("IdFactura", res)
+                    forma.append("IdProducto", d.IdProducto)
+                    forma.append("Cantidad", d.Cantidad)
+                    forma.append("Precio", d.Precio)
+                    var respuesta = fetch("https://localhost:44344/Orders/OrdersDetalles", {
+                        method: "POST",
+                        body: forma
+                    }).then(res => res.json())
+                        .then(res => {
+                            if (res) {
+                                
+                            }
+                        });
+                })
+            });
+        
+        
+    }
+
+
+    async function create() {
+       
+        const response = await fetch('https://localhost:44344/Orders/GetClient');
+        const client = await response.json();
+        console.log(client)
+        var select = document.getElementById('IdCliente');
+
+        client.map(d => {
+            var option = document.createElement('option');
+            option.text = d.nombre;
+            option.value = d.id;
+            select.appendChild(option);
+        });
+        
+        
+    }
+    async function Getprecio() {
+        var select = document.getElementById('IdProducto');
+        const response = await fetch('https://localhost:44344/Orders/GetProduct/' + select.value);
+        const product = await response.json();
+        console.log(product.precio)
+        var txprecio = document.getElementById('Precio');
+        txprecio.value =  product.precio;
+
+    }
+    create();
+    async function Add() {
+        var total = [];
+        var cantidad = document.getElementById('Cantidad');
+        var product = document.getElementById('IdProducto');
+        var precio = document.getElementById('Precio');
+        var sub = (parseInt(cantidad.value) * parseInt(precio.value));
+        var fila = "<tr><td class='IdProducto' >" + product.value + "</td><td class='Cantidad'>" + cantidad.value + "</td><td class='Precio'>" + precio.value + "</td><td class='sub'>" + sub + "</td></tr>";
+        var btn = document.createElement("TR");
+        btn.innerHTML = fila;
+        document.getElementById("tbody").appendChild(btn);
+        document.querySelectorAll('.tbody tr').forEach(function (e) {
+            let fila = {
+                precio: e.querySelector('.sub').innerText
+            };
+            total.push(fila);
+        });
+       
+
+        var totalAges = total.reduce((sum, value) => (parseInt(sum) + parseInt(value.precio)), 0);
+        var txtotal = document.getElementById('Total');
+        var iva = document.getElementById('Iva');
+        iva.value = totalAges * 0.15;
+
+        txtotal.value = totalAges;
+    }
+  
+    
+</script>
